@@ -1,27 +1,90 @@
-version: '3'
-
+version: '3.9'
 services:
-  server:
-    image: coloynle/palword-server:latest
-    build:
-      context: ./
-      dockerfile: ./steamcmd/Dockerfile
-    ports:
-      - "8211:8211/udp"
-    tty: true
-    stdin_open: true
+  palworld-dedicated-server:
+    #build: .
+    container_name: palworld-dedicated-server
+    image: jammsen/palworld-dedicated-server:2f164d2 #2024/01/30更新
     restart: unless-stopped
+    ports:
+      - target: 8211 # Gamerserver port inside of the container
+        published: 8211 # Gamerserver port on your host
+        protocol: udp
+        mode: host
+      - target: 25575 # RCON port inside of the container
+        published: 25575 # RCON port on your host
+        protocol: tcp
+        mode: host
+    environment:
+      - TZ=Asia/Shanghai # 时区Change this for logging and backup, see "Environment-Variables"
+      - ALWAYS_UPDATE_ON_START=true #启动时总是更新
+      - MULTITHREAD_ENABLED=true
+      - COMMUNITY_SERVER=true
+      - BACKUP_ENABLED=true
+      - BACKUP_CRON_EXPRESSION=0 * * * * #每小时自动备份存档
+      - STEAMCMD_VALIDATE_FILES=true
+      - SERVER_SETTINGS_MODE=auto # Change this to manual if you want to edit the config yourself
+      - NETSERVERMAXTICKRATE=60 # 服务器FPS 60 太高不稳定
+      - DIFFICULTY=None
+      - DAYTIME_SPEEDRATE=0.500000 #白天时间流逝速度减半
+      - NIGHTTIME_SPEEDRATE=1.000000
+      - EXP_RATE=10.000000 #十倍经验
+      - PAL_CAPTURE_RATE=2.000000 #两倍捕获概率
+      - PAL_SPAWN_NUM_RATE=1.000000
+      - PAL_DAMAGE_RATE_ATTACK=1.000000
+      - PAL_DAMAGE_RATE_DEFENSE=1.000000
+      - PLAYER_DAMAGE_RATE_ATTACK=1.000000
+      - PLAYER_DAMAGE_RATE_DEFENSE=1.000000
+      - PLAYER_STOMACH_DECREASE_RATE=1.000000
+      - PLAYER_STAMINA_DECREACE_RATE=1.000000
+      - PLAYER_AUTO_HP_REGENE_RATE=1.000000
+      - PLAYER_AUTO_HP_REGENE_RATE_IN_SLEEP=1.000000
+      - PAL_STOMACH_DECREACE_RATE=1.000000
+      - PAL_STAMINA_DECREACE_RATE=1.000000
+      - PAL_AUTO_HP_REGENE_RATE=1.000000
+      - PAL_AUTO_HP_REGENE_RATE_IN_SLEEP=1.000000
+      - BUILD_OBJECT_DAMAGE_RATE=1.000000
+      - BUILD_OBJECT_DETERIORATION_DAMAGE_RATE=0.000000 #建筑物不自己损坏 默认1
+      - COLLECTION_DROP_RATE=1.000000
+      - COLLECTION_OBJECT_HP_RATE=1.000000
+      - COLLECTION_OBJECT_RESPAWN_SPEED_RATE=1.000000
+      - ENEMY_DROP_ITEM_RATE=10.000000 #十倍掉落
+      - DEATH_PENALTY=None #死亡不掉落物品
+      - ENABLE_PLAYER_TO_PLAYER_DAMAGE=false
+      - ENABLE_FRIENDLY_FIRE=false
+      - ENABLE_INVADER_ENEMY=true
+      - ACTIVE_UNKO=false
+      - ENABLE_AIM_ASSIST_PAD=true
+      - ENABLE_AIM_ASSIST_KEYBOARD=false
+      - DROP_ITEM_MAX_NUM=3000
+      - DROP_ITEM_MAX_NUM_UNKO=100
+      - BASE_CAMP_MAX_NUM=128
+      - BASE_CAMP_WORKER_MAXNUM=15
+      - DROP_ITEM_ALIVE_MAX_HOURS=1.000000
+      - AUTO_RESET_GUILD_NO_ONLINE_PLAYERS=false
+      - AUTO_RESET_GUILD_TIME_NO_ONLINE_PLAYERS=72.000000
+      - GUILD_PLAYER_MAX_NUM=20
+      - PAL_EGG_DEFAULT_HATCHING_TIME=0.000000 #孵化不需要时间
+      - WORK_SPEED_RATE=1.000000
+      - IS_MULTIPLAY=false
+      - IS_PVP=false
+      - CAN_PICKUP_OTHER_GUILD_DEATH_PENALTY_DROP=false
+      - ENABLE_NON_LOGIN_PENALTY=true
+      - ENABLE_FAST_TRAVEL=true
+      - IS_START_LOCATION_SELECT_BY_MAP=true
+      - EXIST_PLAYER_AFTER_LOGOUT=false
+      - ENABLE_DEFENSE_OTHER_GUILD_PLAYER=false
+      - COOP_PLAYER_MAX_NUM=4
+      - MAX_PLAYERS=32
+      - SERVER_NAME=Palworld Server #服务器名称
+      - SERVER_DESCRIPTION=Palworld #服务器描述
+      - SERVER_PASSWORD=123456 #服务器密码
+      - ADMIN_PASSWORD=666666 #管理员密码
+      - PUBLIC_PORT=8211 #连接端口号
+      - PUBLIC_IP=10.0.0.1 #主机公网IP
+      - RCON_ENABLED=true
+      - RCON_PORT=25575
+      - REGION=
+      - USEAUTH=true
+      - BAN_LIST_URL=https://api.palworldgame.com/api/banlist.txt
     volumes:
-      - './config:/home/steam/Steam/steamapps/common/PalServer/Pal/Saved/Config/LinuxServer'
-      - './saved:/home/steam/Steam/steamapps/common/PalServer/Pal/Saved/SaveGames'
-#    command: tail -f /dev/null
-    entrypoint: [
-      "/home/steam/Steam/steamapps/common/PalServer/PalServer.sh",
-      "--port",
-      "8211",
-      "--players",
-      "16",
-      "--useperfthreads",
-      "-NoAsyncLoadingThread",
-      "-UseMultithreadForDS"
-    ]
+      - ./game:/palworld

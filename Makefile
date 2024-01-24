@@ -6,3 +6,6 @@ stop:
 
 restart:
 	docker compose -p "palword-server" down --remove-orphans && docker compose -p "palword-server" up -d
+
+log:
+	docker logs -f palworld-dedicated-server

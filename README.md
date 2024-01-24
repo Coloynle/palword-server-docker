@@ -13,15 +13,22 @@ make stop
 
 #重启
 make restart 
+
+#日志
+make log 
 ```
 
 ### 存档目录
 ```shell
-saved
+game/Pal/Saved/SaveGames
+```
+
+### 存档备份目录
+```shell
+game/backups
 ```
 
 ### 配置
 ```shell
-复制 config/DefaultPalWorldSettings.ini
-重写 config/PalWorldSettings.ini 即可
+game目录下映射了所有文件，需要更改配置需要先停止服务器，否则更改会被回滚
 ```
