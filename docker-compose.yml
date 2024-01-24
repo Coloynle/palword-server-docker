@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  server:
+    image: coloynle/palword-server:latest
+    build:
+      context: ./
+      dockerfile: ./steamcmd/Dockerfile
+    ports:
+      - "8211:8211/udp"
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    volumes:
+      - './config:/home/steam/Steam/steamapps/common/PalServer/Pal/Saved/Config/LinuxServer'
+      - './saved:/home/steam/Steam/steamapps/common/PalServer/Pal/Saved/SaveGames'
+#    command: tail -f /dev/null
+    entrypoint: [
+      "/home/steam/Steam/steamapps/common/PalServer/PalServer.sh",
+      "--port",
+      "8211",
+      "--players",
+      "16",
+      "--useperfthreads",
+      "-NoAsyncLoadingThread",
+      "-UseMultithreadForDS"
+    ]
