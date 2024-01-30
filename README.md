@@ -16,6 +16,12 @@ make restart
 
 #日志
 make log 
+
+#查看在线玩家
+make showplayers
+
+#保存游戏
+make save
 ```
 
 ### 存档目录

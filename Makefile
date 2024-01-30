@@ -9,3 +9,9 @@ restart:
 
 log:
 	docker logs -f palworld-dedicated-server
+
+showplayers:
+	docker exec palworld-dedicated-server rcon showplayers
+
+save:
+	docker exec palworld-dedicated-server rcon save
